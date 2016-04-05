@@ -1,9 +1,8 @@
-import { nfcall } from 'q'
 import { hostname } from 'os'
 import axios from 'axios'
 import { createHmac } from 'crypto'
 
-import { start } from 'loader'
+import { start } from 'components/loader'
 import store from 'store'
 import config from 'config'
 import { saveToken, saveSession } from 'actions/config'
@@ -12,7 +11,7 @@ import { saveToken, saveSession } from 'actions/config'
  * Either login or register
  */
 export const authorize = uid => {
-  const app_token = store.getState().config.tokens[uid]
+  const app_token = store.getState().config.getIn(['tokens', uid])
   if (!app_token) { return register(uid) }
   return login(app_token, uid)
 }

@@ -14,19 +14,13 @@ export const loader = blessed.box({
 })
 
 export const main = blessed.box({
-  width: '98%',
-  height: '98%',
+  width: '100%',
+  height: '100%',
+  label: 'Freebox Cmder',
   top: 'center',
   left: 'center',
   border: {
     type: 'line',
     fg: 'blue'
   }
-})
-
-export const title = blessed.text({
-  bg: 'black',
-  fg: 'white',
-  content: 'FreeBox Cmder',
-  left: 'center'
 })
