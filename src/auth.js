@@ -34,8 +34,8 @@ const openSession = (app_token, challenge, uid) => {
       store.dispatch(saveSession(session_token))
 
     })
-    .catch(({ data }) => {
-      const { error_code } = data
+    .catch(err => {
+      const { data: { error_code } } = err
       if (error_code === 'invalid_token') { return register(uid) }
       throw new Error('Cannot create session.')
     })

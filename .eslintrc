@@ -1,0 +1,9 @@
+{
+  "extends": ["zavatta"],
+  "rules": {
+    "camelcase": 0
+  },
+  "globals": {
+    "Promise": false
+  }
+}
