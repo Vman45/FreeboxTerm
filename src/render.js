@@ -16,6 +16,7 @@ export default () => {
       screen.append(components.dlPage)
       components.diskGauge.setStack(data.disk)
       components.dlChart.setData(data.ioRates)
+      //console.log(data.downloads)
     },
     1: () => {},
     2: () => {}

@@ -3,7 +3,7 @@ import contrib from 'blessed-contrib'
 
 export const screen = blessed.screen({ smartCSR: true })
 
-screen.title = 'FreeBox Cmder'
+screen.title = 'FreeboxTerm'
 
 export const loader = blessed.box({
   width: '100%',
@@ -13,6 +13,9 @@ export const loader = blessed.box({
   content: 'Checking for Freebox around   /'
 })
 
+/**
+ * Menu section
+ */
 export const menuPage = blessed.layout({
   width: '40%',
   height: '20%',
@@ -31,12 +34,15 @@ const menuBoxBase = {
 
 export const menus = [
   blessed.box({ label: 'downloads', content: '⇓', ...menuBoxBase }),
-  blessed.box({ label: 'status', content: '!',  ...menuBoxBase }),
+  blessed.box({ label: 'status', content: '!', ...menuBoxBase }),
   blessed.box({ label: 'settings', content: '?', ...menuBoxBase })
 ]
 
 menus.forEach(m => menuPage.append(m))
 
+/**
+ * Dowload section
+ */
 export const dlPage = blessed.layout({
   width: '100%',
   height: '100%',
@@ -44,6 +50,7 @@ export const dlPage = blessed.layout({
   left: 'center'
 })
 
+export const dlList = blessed.box({ height: '60%', width: '100%' })
 export const diskGauge = contrib.gauge({ width: '100%', height: '10%' })
 
 const dlBottom = blessed.layout({ height: '30%', width: '100%' })
@@ -55,12 +62,6 @@ export const dlChart = contrib.line({
   showLegend: true,
   border: 'bg',
   legend: { width: 12 }
-})
-
-export const dlList = blessed.list({
-  height: '60%',
-  width: '100%',
-  bg: 'red'
 })
 
 dlPage.append(dlList)
