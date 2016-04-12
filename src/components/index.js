@@ -64,7 +64,17 @@ export const dlChart = contrib.line({
   legend: { width: 12 }
 })
 
-export const downloads = []
+const dlShortcuts = blessed.box({
+  width: '50%',
+  height: '100%',
+  content: `
+    (Del)ete torrent and erase files\n
+    (T)oggle status\n
+    (D)ownload
+  `,
+  fg: 'white',
+  border: 'bg'
+})
 
 export const txtBase = { fg: 'white', height: '100%', align: 'center', valign: 'middle' }
 
@@ -72,3 +82,4 @@ dlPage.append(dlList)
 dlPage.append(diskGauge)
 dlPage.append(dlBottom)
 dlBottom.append(dlChart)
+dlBottom.append(dlShortcuts)

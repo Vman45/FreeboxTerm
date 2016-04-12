@@ -2,7 +2,7 @@ import blessed from 'blessed'
 import dateFormat from 'dateformat'
 
 import * as components from 'components'
-import { fileSize, rate } from 'utils'
+import { duration, fileSize, rate } from 'utils'
 import store from 'store'
 
 export default () => {
@@ -23,11 +23,11 @@ export default () => {
       components.dlChart.setData(data.ioRates)
 
       const icons = {
-        stopped: { txt: '▮▮', color: 'orange' },
-        queued: { txt: 'ℚ', color: 'orange' },
+        stopped: { txt: '▮▮', color: 'yellow' },
+        queued: { txt: 'ℚ', color: 'yellow' },
         starting: { txt: '⇣', color: 'green' },
         downloading: { txt: '⇣', color: 'green' },
-        stopping: { txt: '✖', color: 'orange' },
+        stopping: { txt: '⇥', color: 'yellow' },
         error: { txt: '✖', color: 'red' },
         done: { txt: '✓', color: 'green' },
         checking: { txt: 'ℂ', color: 'yellow' },
@@ -47,8 +47,8 @@ export default () => {
         const icon = icons[dl.status]
         const status = blessed.box({ ...components.txtBase, width: '5%', content: icon.txt, fg: icon.color })
         const name = blessed.box({ ...components.txtBase, width: '35%', content: dl.name, align: 'left', fg: ui.currentTorrent === i ? 'white' : 'grey' })
-        const progress = blessed.box({ ...components.txtBase, width: '10%', content: `${dl.rx_pct / 100}%` })
-        const eta = blessed.box({ ...components.txtBase, width: '5%', content: `${dl.eta}s` })
+        const progress = blessed.box({ ...components.txtBase, width: '7%', content: `${dl.rx_pct / 100}%` })
+        const eta = blessed.box({ ...components.txtBase, width: '8%', content: duration(dl.eta) })
         const speed = blessed.box({
           ...components.txtBase,
           width: '10%',
