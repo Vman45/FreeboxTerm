@@ -23,6 +23,13 @@ export const fileSize = e =>
   : e < 1e9 ? `${Math.round(e * 10 / 1e6) / 10} Ko`
   : `${Math.round(e * 10 / 1e9) / 10} Go`
 
+export const rate = e =>
+  e === 0 ? '-'
+  : e < 1e3 ? `${e} octet/s`
+  : e < 1e6 ? `${Math.round(e * 10 / 1e3) / 10} Ko/s`
+  : e < 1e9 ? `${Math.round(e * 10 / 1e6) / 10} Mo/s`
+  : `${Math.round(e * 10 / 1e9) / 10} Go/s`
+
 export const startReloadDl = () => {
 
   const fn = () => {
@@ -47,7 +54,7 @@ export const startReloadDl = () => {
           tx_rate: ((tx_rate / 1048576)).toFixed(3)
         }),
         disk({ free, used }),
-        downloads(resultDownloads)
+        downloads(resultDownloads.sort((a, b) => a.created_ts - b.created_ts))
       ]))
 
       if (!dlRefresh) { return }

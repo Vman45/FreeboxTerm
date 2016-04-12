@@ -24,13 +24,13 @@ export default handleActions({
   DOWN: (state, { payload: dlSize }) => {
     if (state.get('activeMenu') !== 0) { return state }
     const cur = state.get('currentTorrent')
-    return state.set('currentTorrent', cur === dlSize - 1 ? 0 : dlSize + 1)
+    return state.set('currentTorrent', cur === dlSize - 1 ? 0 : cur + 1)
   },
 
   UP: (state, { payload: dlSize }) => {
     if (state.get('activeMenu') !== 0) { return state }
     const cur = state.get('currentTorrent')
-    return state.set('currentTorrent', cur === 0 ? dlSize - 1: dlSize - 1)
+    return state.set('currentTorrent', cur === 0 ? dlSize - 1 : cur - 1)
   },
 
   ENTER: state =>

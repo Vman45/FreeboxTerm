@@ -6,6 +6,6 @@ export default {
   app_name: 'Freebox Cmder',
   app_version: '0.0.1',
 
-  dotfile: `${process.env.HOME}/.freeboxcmder`
+  dotfile: `${process.env.HOME}/.freeboxterm`
 
 }

@@ -2,7 +2,7 @@ import blessed from 'blessed'
 import dateFormat from 'dateformat'
 
 import * as components from 'components'
-import { fileSize } from 'utils'
+import { fileSize, rate } from 'utils'
 import store from 'store'
 
 export default () => {
@@ -37,51 +37,50 @@ export default () => {
         retry: { txt: '↺', color: 'yellow' }
       }
 
-      components.dlList.children.forEach(c => c.hide() && c.destroy())
+      components.dlList.children.forEach(c => c.hide() && c.free() && c.destroy())
+      components.dlList.children = []
 
-      let i = 0
-      data.downloads.forEach(dl => {
-        if (i === 10) { return }
+      data.downloads.forEach((dl, i) => {
+        if ((i < ui.currentTorrent && data.downloads.length - i > 10) || (i > ui.currentTorrent + 10)) { return }
 
         const box = blessed.layout({ width: '100%', height: '10%', valign: 'middle' })
-        if (data.downloads.length) {
-          const icon = icons[dl.status]
-          const status = blessed.box({ ...components.txtBase, width: '5%', content: icon.txt, fg: icon.color })
-          const name = blessed.box({ ...components.txtBase, width: '35%', content: dl.name, align: 'left' })
-          const progress = blessed.box({ ...components.txtBase, width: '10%', content: `${dl.rx_pct / 100}%` })
-          const eta = blessed.box({ ...components.txtBase, width: '5%', content: `${dl.eta}s` })
-          const speed = blessed.box({
-            ...components.txtBase,
-            width: '10%',
-            content: dl.status === 'downloading' ? dl.rx_rate / 100 : dl.tx_rate / 100
-          })
+        const icon = icons[dl.status]
+        const status = blessed.box({ ...components.txtBase, width: '5%', content: icon.txt, fg: icon.color })
+        const name = blessed.box({ ...components.txtBase, width: '35%', content: dl.name, align: 'left', fg: ui.currentTorrent === i ? 'white' : 'grey' })
+        const progress = blessed.box({ ...components.txtBase, width: '10%', content: `${dl.rx_pct / 100}%` })
+        const eta = blessed.box({ ...components.txtBase, width: '5%', content: `${dl.eta}s` })
+        const speed = blessed.box({
+          ...components.txtBase,
+          width: '10%',
+          tags: true,
+          content: dl.status === 'downloading' ? rate(dl.rx_rate) : rate(dl.tx_rate)
+        })
 
-          const stats = blessed.box({
-            ...components.txtBase,
-            width: '20%',
-            content: `${fileSize(dl.rx_bytes)} / ${fileSize(dl.tx_bytes)} (${Math.round(dl.rx_bytes ? 100 * dl.tx_bytes / dl.rx_bytes : 0) / 100})`,
-            align: 'left'
-          })
+        const stats = blessed.box({
+          ...components.txtBase,
+          width: '20%',
+          content: `{blue-fg}${fileSize(dl.rx_bytes)} ⇣{/blue-fg} / {red-fg}${fileSize(dl.tx_bytes)} ⇡{/red-fg} (${Math.round(dl.rx_bytes ? 100 * dl.tx_bytes / dl.rx_bytes : 0) / 100})`,
+          tags: true,
+          align: 'left'
+        })
 
-          const date = blessed.box({
-            ...components.txtBase,
-            width: '15%',
-            content: dateFormat(new Date(dl.created_ts * 1000), 'd mmmm yyyy HH:MM:ss'),
-            align: 'right'
-          })
+        const date = blessed.box({
+          ...components.txtBase,
+          width: '15%',
+          content: dateFormat(new Date(dl.created_ts * 1000), 'd mmmm yyyy HH:MM:ss'),
+          align: 'right'
+        })
 
-          box.append(status)
-          box.append(name)
-          box.append(progress)
-          box.append(eta)
-          box.append(speed)
-          box.append(stats)
-          box.append(date)
-        }
+        box.append(status)
+        box.append(name)
+        box.append(progress)
+        box.append(eta)
+        box.append(speed)
+        box.append(stats)
+        box.append(date)
 
         components.dlList.append(box)
 
-        ++i
       })
 
     },

@@ -20,8 +20,9 @@ store.subscribe(() => {
   }
 
   if (prev && prev.ui !== cur.ui) {
-    if (cur.ui.get('activeMenu') === 0) { startReloadDl() }
-    else { stopAllReloads() }
+    const curMenu = cur.ui.get('activeMenu')
+    if (prev.ui.get('activeMenu') !== 0 && curMenu === 0) { startReloadDl() }
+    if (curMenu !== 0) { stopAllReloads() }
     render()
   }
 
