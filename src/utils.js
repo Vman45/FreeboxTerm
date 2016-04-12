@@ -17,6 +17,12 @@ export const stopAllReloads = () => {
   dlRefresh = false
 }
 
+export const fileSize = e =>
+  e < 1e3 ? `${e} octets`
+  : e < 1e6 ? `${Math.round(e * 10 / 1e3) / 10} Ko`
+  : e < 1e9 ? `${Math.round(e * 10 / 1e6) / 10} Ko`
+  : `${Math.round(e * 10 / 1e9) / 10} Go`
+
 export const startReloadDl = () => {
 
   const fn = () => {

@@ -1,6 +1,8 @@
 import blessed from 'blessed'
+import dateFormat from 'dateformat'
 
 import * as components from 'components'
+import { fileSize } from 'utils'
 import store from 'store'
 
 export default () => {
@@ -15,40 +17,72 @@ export default () => {
   const switcher = {
     null: () => screen.append(components.menuPage),
     0: () => {
-      components.dlList.children.forEach(c => c.destroy())
       screen.append(components.dlPage)
 
       components.diskGauge.setStack(data.disk)
       components.dlChart.setData(data.ioRates)
 
-      const box = blessed.layout({ width: '100%', height: '10%', valign: 'middle' })
-      const box2 = blessed.layout({ width: '100%', height: '10%', valign: 'middle', bg: 'red' })
-      if (data.downloads.length) {
-        const leoeuoeu = '✕, ⇣'
-        const icons = {
-          stopped: '▮▮',
-          queued: '▮▮',
-          starting: '...',
-          downloading: '⇣',
-          stopping	task is gracefully stopping
-          error	there was a problem with the download, you can get an error code in the error field
-          done	the download is over. For bt you can resume seeding setting the status to seeding if the ratio is not reached yet
-          checking	(only valid for nzb) download is over, the downloaded files are being checked using par2
-          repairing	(only valid for nzb) download is over, the downloaded files are being repaired using par2
-          extracting	only valid for nzb) download is over, the downloaded files are being extracted
-          seeding	(only valid for bt) download is over, the content is Change to being shared to other users. The task will automatically stop once the seed ratio has been reached
-          retry
-        }
-        const status = blessed.box({ ...components.txtBase, width: '5%', content: '⇡', fg: 'green' })
-        const name = blessed.box({ ...components.txtBase, width: '45%', content: data.downloads[0].name })
-        const progress = blessed.box({ ...components.txtBase, width: '10%', content: `70%` })
-        box.append(status)
-        box.append(name)
-        box.append(progress)
+      const icons = {
+        stopped: { txt: '▮▮', color: 'orange' },
+        queued: { txt: 'ℚ', color: 'orange' },
+        starting: { txt: '⇣', color: 'green' },
+        downloading: { txt: '⇣', color: 'green' },
+        stopping: { txt: '✖', color: 'orange' },
+        error: { txt: '✖', color: 'red' },
+        done: { txt: '✓', color: 'green' },
+        checking: { txt: 'ℂ', color: 'yellow' },
+        repairing: { txt: 'ℝ', color: 'yellow' },
+        extracting: { txt: '⇣', color: 'green' },
+        seeding: { txt: '⇡', color: 'green' },
+        retry: { txt: '↺', color: 'yellow' }
       }
 
-      components.dlList.append(box)
-      components.dlList.append(box2)
+      components.dlList.children.forEach(c => c.hide() && c.destroy())
+
+      let i = 0
+      data.downloads.forEach(dl => {
+        if (i === 10) { return }
+
+        const box = blessed.layout({ width: '100%', height: '10%', valign: 'middle' })
+        if (data.downloads.length) {
+          const icon = icons[dl.status]
+          const status = blessed.box({ ...components.txtBase, width: '5%', content: icon.txt, fg: icon.color })
+          const name = blessed.box({ ...components.txtBase, width: '35%', content: dl.name, align: 'left' })
+          const progress = blessed.box({ ...components.txtBase, width: '10%', content: `${dl.rx_pct / 100}%` })
+          const eta = blessed.box({ ...components.txtBase, width: '5%', content: `${dl.eta}s` })
+          const speed = blessed.box({
+            ...components.txtBase,
+            width: '10%',
+            content: dl.status === 'downloading' ? dl.rx_rate / 100 : dl.tx_rate / 100
+          })
+
+          const stats = blessed.box({
+            ...components.txtBase,
+            width: '20%',
+            content: `${fileSize(dl.rx_bytes)} / ${fileSize(dl.tx_bytes)} (${Math.round(dl.rx_bytes ? 100 * dl.tx_bytes / dl.rx_bytes : 0) / 100})`,
+            align: 'left'
+          })
+
+          const date = blessed.box({
+            ...components.txtBase,
+            width: '15%',
+            content: dateFormat(new Date(dl.created_ts * 1000), 'd mmmm yyyy HH:MM:ss'),
+            align: 'right'
+          })
+
+          box.append(status)
+          box.append(name)
+          box.append(progress)
+          box.append(eta)
+          box.append(speed)
+          box.append(stats)
+          box.append(date)
+        }
+
+        components.dlList.append(box)
+
+        ++i
+      })
 
     },
     1: () => {},
