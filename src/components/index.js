@@ -50,7 +50,7 @@ export const dlPage = blessed.layout({
   left: 'center'
 })
 
-export const dlList = blessed.box({ height: '60%', width: '100%' })
+export const dlList = blessed.layout({ height: '60%', width: '100%' })
 export const diskGauge = contrib.gauge({ width: '100%', height: '10%' })
 
 const dlBottom = blessed.layout({ height: '30%', width: '100%' })
@@ -63,6 +63,10 @@ export const dlChart = contrib.line({
   border: 'bg',
   legend: { width: 12 }
 })
+
+export const downloads = []
+
+export const txtBase = { fg: 'white', height: '100%', align: 'center', valign: 'middle' }
 
 dlPage.append(dlList)
 dlPage.append(diskGauge)

@@ -1,3 +1,4 @@
+const piping = require('piping')
 require('babel-register')
 require('babel-polyfill')
 
@@ -6,4 +7,6 @@ const appModulePath = require('app-module-path')
 
 appModulePath.addPath(path.join(__dirname, 'src'))
 
-require('./src')
+if (process.env.NODE_ENV !== 'dev' || piping({ hook: true })) {
+  require('./src')
+}

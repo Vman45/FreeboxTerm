@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
+import { enableBatching } from 'redux-batched-actions'
 import { writeFile } from 'fs'
 
 import config from 'config'
@@ -7,7 +8,7 @@ import reducer from 'reducers'
 import render from 'render'
 import { stopAllReloads, startReloadDl } from 'utils'
 
-const store = createStore(reducer, {}, compose(applyMiddleware(thunk)))
+const store = createStore(enableBatching(reducer), {}, compose(applyMiddleware(thunk)))
 
 let prev
 
@@ -19,11 +20,8 @@ store.subscribe(() => {
   }
 
   if (prev && prev.ui !== cur.ui) {
-    if (cur.ui.get('activeMenu') === 0) {
-      startReloadDl()
-    } else {
-      stopAllReloads()
-    }
+    if (cur.ui.get('activeMenu') === 0) { startReloadDl() }
+    else { stopAllReloads() }
     render()
   }
 

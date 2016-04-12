@@ -3,7 +3,8 @@ import { fromJS } from 'immutable'
 
 const initialState = fromJS({
   selectedMenu: 0,
-  activeMenu: null
+  activeMenu: null,
+  currentTorrent: 0
 })
 
 export default handleActions({
@@ -18,6 +19,18 @@ export default handleActions({
     if (state.get('activeMenu') !== null) { return state }
     const cur = state.get('selectedMenu')
     return state.set('selectedMenu', cur === 2 ? 0 : cur + 1)
+  },
+
+  DOWN: (state, { payload: dlSize }) => {
+    if (state.get('activeMenu') !== 0) { return state }
+    const cur = state.get('currentTorrent')
+    return state.set('currentTorrent', cur === dlSize - 1 ? 0 : dlSize + 1)
+  },
+
+  UP: (state, { payload: dlSize }) => {
+    if (state.get('activeMenu') !== 0) { return state }
+    const cur = state.get('currentTorrent')
+    return state.set('currentTorrent', cur === 0 ? dlSize - 1: dlSize - 1)
   },
 
   ENTER: state =>
