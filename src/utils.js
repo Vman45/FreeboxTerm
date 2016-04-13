@@ -1,13 +1,16 @@
 import axios from 'axios'
+import path from 'path'
 import querystring from 'querystring'
+import request from 'request'
+import progress from 'request-progress'
 import { batchActions } from 'redux-batched-actions'
-import { writeFile } from 'fs'
+import { writeFile, createWriteStream } from 'fs'
 
 import config from 'config'
 import store from 'store'
-import { ioRates, disk, downloads } from 'actions/data'
+import { ioRates, disk, downloads, endDownload, downloading } from 'actions/data'
 
-const getHeaders = isForm => ({ headers: { 'X-Fbx-App-Auth': store.getState().config.get('session'), } })
+const getHeaders = () => ({ headers: { 'X-Fbx-App-Auth': store.getState().config.get('session') } })
 
 export const logToFile = data => writeFile('./freebox.log', data)
 
@@ -61,6 +64,26 @@ export const deleteTorrent = () => {
   if (ui.get('activeMenu') !== 0) { return }
   const { id } = data.get('downloads').toJS()[ui.get('currentTorrent')]
   axios.delete(`${config.base}/api/v3/downloads/${id}/erase`, getHeaders())
+}
+
+export const downloadTorrent = () => {
+  const { ui, data } = store.getState()
+  if (ui.get('activeMenu') !== 0) { return }
+  const { id } = data.get('downloads').toJS()[ui.get('currentTorrent')]
+  axios.get(`${config.base}/api/v3/downloads/${id}/files`, getHeaders())
+    .then(({ data }) => {
+      const { result, success } = data
+      if (success !== true) { return }
+
+      // TODO
+      if (result.length > 1) { return }
+
+      progress(request({ url: `${config.base}/api/v3/dl/${result[0].filepath}`, ...getHeaders() }), { throttle: 200 })
+        .on('progress', progress => store.dispatch(downloading(progress)))
+        .on('error', () => store.dispatch(endDownload()))
+        .on('end', () => store.dispatch(endDownload()))
+        .pipe(createWriteStream(path.join(process.env.HOME, 'downloads', result[0].name)))
+    })
 }
 
 let dlRefresh = false

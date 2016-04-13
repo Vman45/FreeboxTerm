@@ -4,7 +4,8 @@ import { fromJS } from 'immutable'
 const initialState = fromJS({
   ioRates: [{ x: [], y: [], style: { line: 'blue' }, title: 'dl (mb/s)' }, { x: [], y: [], style: { line: 'red' }, title: 'up (mb/s)' }],
   disk: [{ percent: 0, stroke: 'red' }, { percent: 0, stroke: 'green' }],
-  downloads: []
+  downloads: [],
+  download: null
 })
 
 export default handleActions({
@@ -25,6 +26,11 @@ export default handleActions({
       .updateIn(['disk', 1], e => e.set('percent', free)),
 
   DOWNLOADS: (state, { payload: downloads }) =>
-    state.set('downloads', fromJS(downloads))
+    state.set('downloads', fromJS(downloads)),
+
+  DOWNLOADING: (state, { payload: progress }) =>
+    state.set('download', fromJS(progress)),
+
+  DOWNLOAD_END: state => state.set('download', null)
 
 }, initialState)

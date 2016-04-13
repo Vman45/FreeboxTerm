@@ -64,17 +64,20 @@ export const dlChart = contrib.line({
   legend: { width: 12 }
 })
 
+const dlBotRight = blessed.layout({ width: '50%', height: '100%' })
 const dlShortcuts = blessed.box({
-  width: '50%',
-  height: '100%',
+  width: '100%',
+  height: '40%',
   content: `
-    (Del)ete torrent and erase files\n
-    (T)oggle status\n
+    (Del)ete torrent and erase files
+    (T)oggle status
     (D)ownload
   `,
   fg: 'white',
   border: 'bg'
 })
+
+export const dlGauge = contrib.gauge({ width: '100%', height: '60%' })
 
 export const txtBase = { fg: 'white', height: '100%', align: 'center', valign: 'middle' }
 
@@ -82,4 +85,6 @@ dlPage.append(dlList)
 dlPage.append(diskGauge)
 dlPage.append(dlBottom)
 dlBottom.append(dlChart)
-dlBottom.append(dlShortcuts)
+dlBottom.append(dlBotRight)
+dlBotRight.append(dlShortcuts)
+dlBotRight.append(dlGauge)

@@ -21,6 +21,7 @@ export default () => {
 
       components.diskGauge.setStack(data.disk)
       components.dlChart.setData(data.ioRates)
+      components.dlGauge.hide()
 
       const icons = {
         stopped: { txt: '▮▮', color: 'yellow' },
@@ -39,6 +40,11 @@ export default () => {
 
       components.dlList.children.forEach(c => c.hide() && c.free() && c.destroy())
       components.dlList.children = []
+
+      if (data.download) {
+        components.dlGauge.show()
+        components.dlGauge.setPercent((data.download.percentage * 100).toFixed(2))
+      }
 
       data.downloads.forEach((dl, i) => {
         if ((i < ui.currentTorrent && data.downloads.length - i > 10) || (i > ui.currentTorrent + 10)) { return }
