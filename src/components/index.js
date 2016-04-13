@@ -53,7 +53,7 @@ export const dlPage = blessed.layout({
 export const dlList = blessed.layout({ height: '60%', width: '100%' })
 export const diskGauge = contrib.gauge({ width: '100%', height: '10%' })
 
-const dlBottom = blessed.layout({ height: '30%', width: '100%' })
+const dlBottom = blessed.layout({ height: '40%', width: '100%' })
 
 export const dlChart = contrib.line({
   width: '50%',
