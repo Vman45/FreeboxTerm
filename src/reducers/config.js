@@ -17,7 +17,7 @@ export default handleActions({
 
   SAVE_SESSION: (state, { payload: session }) => state.set('session', session),
 
-  SAVE_TOKEN: (state, { payload: { uid, token } }) =>
-    state.updateIn(['tokens'], tokens => tokens.set(uid, token))
+  SAVE_TOKEN: (state, { payload: { uid, app_token } }) =>
+    state.updateIn(['tokens'], tokens => tokens.set(uid, app_token))
 
 }, initialState)

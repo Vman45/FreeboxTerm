@@ -104,7 +104,7 @@ const register = (uid, dl) => {
 
   }))
   .then(([app_token, challenge]) => {
-    store.dispatch(saveToken(uid, app_token))
+    store.dispatch(saveToken({ uid, app_token }))
     return openSession(app_token, challenge, uid)
   })
 
