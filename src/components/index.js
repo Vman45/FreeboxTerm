@@ -1,7 +1,7 @@
 import blessed from 'blessed'
 import contrib from 'blessed-contrib'
 
-export const screen = blessed.screen({ smartCSR: true, dump: 'dump.log' })
+export const screen = blessed.screen({ smartCSR: true })
 
 screen.title = 'FreeboxTerm'
 
