@@ -49,7 +49,7 @@ export default () => {
       data.downloads.forEach((dl, i) => {
         if ((i < ui.currentTorrent && data.downloads.length - i > 10) || (i > ui.currentTorrent + 10)) { return }
 
-        const box = blessed.layout({ width: '100%', height: '11%', valign: 'middle' })
+        const box = blessed.layout({ width: '100%', height: '10%', valign: 'middle' })
         const icon = icons[dl.status]
         const status = blessed.box({ ...components.txtBase, width: '5%', content: icon.txt, fg: icon.color })
         const name = blessed.box({ ...components.txtBase, width: '35%', content: dl.name, align: 'left', fg: ui.currentTorrent === i ? 'white' : 'grey' })

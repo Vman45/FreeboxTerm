@@ -6,7 +6,23 @@
   "scripts": {
     "start": "node .",
     "dev": "NODE_ENV=dev node .",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "build": "babel src --out-dir build && PYTHON=/usr/bin/python2 nexe"
+  },
+  "nexe": {
+    "input": "build/index.js",
+    "output": "freebox",
+    "python": "/usr/bin/python2",
+    "browserify": {
+      "paths": ["./build", "./node_modules"]
+    },
+    "runtime": {
+      "framework": "node",
+      "version": "5.10.0"
+    }
+  },
+  "bin": {
+    "freebox": "bin.js"
   },
   "author": "Balthazar Gronon",
   "license": "MIT",
@@ -26,6 +42,7 @@
   },
   "devDependencies": {
     "app-module-path": "^1.0.6",
+    "babel-cli": "^6.7.5",
     "babel-eslint": "^6.0.2",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-polyfill": "^6.7.4",
