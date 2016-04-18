@@ -32,7 +32,7 @@ Download torrent, if it consists of one file, download will start immediatly, if
 
     w
     
-Toggle wifi on or off. **You'll need to enable first the application to control the freebox settings in the `Access Settings`**.
+Toggle wifi on or off. *You'll need to enable first the application to control the freebox settings in the `Access Settings`*.
 
     m
 
