@@ -1,7 +1,7 @@
 import { screen } from 'components'
 
 import store from 'store'
-import { deleteTorrent, toggleTorrent, downloadTorrent, toggleWifi, toggleMode } from 'utils'
+import { deleteTorrent, toggleTorrent, downloadTorrent, toggleWifi, toggleMode } from 'core/api'
 import { left, right, enter, q, down, up } from 'actions/ui'
 
 screen.key(['escape', 'C-c'], () => process.exit(0))

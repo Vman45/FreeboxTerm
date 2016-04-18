@@ -11,7 +11,9 @@ let initialState = fromJS({
 
 try {
   initialState = fromJS(JSON.parse(readFileSync(config.dotfile, 'utf-8')))
-} catch (e) {}
+} catch (e) {
+  console.log(e)
+}
 
 export default handleActions({
 

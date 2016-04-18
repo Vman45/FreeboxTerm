@@ -3,14 +3,18 @@ import axios from 'axios'
 import { authorize } from 'core/auth'
 import { loader, screen } from 'components'
 import { start, stop } from 'components/loader'
-import { dl, startReload } from 'utils'
+import { startReload } from 'utils'
+import { dl } from 'core/api'
 import config from 'config'
 import render from 'render'
 
 const download_url = process.argv[2]
 
-if (download_url) { screen.destroy() }
-else { require('core/keys') }
+if (download_url) {
+  screen.destroy()
+} else {
+  require('core/keys')
+}
 
 start()
 
@@ -32,8 +36,7 @@ axios.get(`${config.base}/api_version`)
 
     dl(download_url)
       .then(({ data }) => {
-        if (data.msg) { console.log(data.msg) }
-        else { console.log(`> Link added.`) }
+        console.log(data.msg ? data.msg : '> Link added.')
         process.exit(0)
       })
       .catch(err => { throw err })

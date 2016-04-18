@@ -53,7 +53,7 @@ const bottomStatus = blessed.layout({ height: 1, width: '100%' })
 
 export const wifi = blessed.text({ content: ' WIFI ', fg: 'white' })
 export const dlMode = blessed.text({ content: ' MODE ', fg: 'white' })
-export const msg = blessed.text({ fg: 'white '})
+export const msg = blessed.text({ fg: 'white' })
 
 bottomStatus.append(wifi)
 bottomStatus.append(dlMode)
