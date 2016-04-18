@@ -7,14 +7,17 @@
     "start": "node .",
     "dev": "NODE_ENV=dev node .",
     "lint": "eslint src",
-    "build": "babel src --out-dir build && PYTHON=/usr/bin/python2 nexe"
+    "build": "babel src --out-dir build && PYTHON=/usr/bin/python2 ./node_modules/.bin/nexe"
   },
   "nexe": {
     "input": "build/index.js",
     "output": "freebox",
     "python": "/usr/bin/python2",
     "browserify": {
-      "paths": ["./build", "./node_modules"]
+      "paths": [
+        "./build",
+        "./node_modules"
+      ]
     },
     "runtime": {
       "framework": "node",
@@ -51,6 +54,9 @@
     "babel-register": "^6.7.2",
     "eslint": "^2.7.0",
     "eslint-config-zavatta": "^3.0.1",
-    "piping": "^0.3.0"
+    "nexe": "^1.1.2",
+    "piping": "^0.3.0",
+    "pty.js": "^0.3.0",
+    "term.js": "0.0.7"
   }
 }

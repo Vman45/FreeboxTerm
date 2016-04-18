@@ -8,7 +8,16 @@ import { writeFile, createWriteStream } from 'fs'
 
 import config from 'config'
 import store from 'store'
-import { ioRates, disk, downloads, endDownload, downloading } from 'actions/data'
+import {
+  wifi,
+  ioRates,
+  disk,
+  dlMode,
+  downloads,
+  endDownload,
+  downloading
+} from 'actions/data'
+import { setMessage } from 'components/message'
 
 const getHeaders = () => ({ headers: { 'X-Fbx-App-Auth': store.getState().config.get('session') } })
 
@@ -59,11 +68,37 @@ export const toggleTorrent = () => {
 
   axios.put(`${config.base}/api/v3/downloads/${id}`, { status: switcher[status] }, getHeaders())
 }
+
+export const toggleMode = shifted => {
+  const { data } = store.getState()
+  const dlMode = data.get('dlMode')
+  const switcher = { normal: 'slow', slow: 'normal', hibernate: 'normal' }
+  const switcherShift = { normal: 'hibernate', slow: 'hibernate', hibernate: 'normal' }
+
+  axios.put(`${config.base}/api/v3/downloads/throttling`, {
+    throttling: shifted ? switcherShift[dlMode] : switcher[dlMode]
+  }, getHeaders())
+  .catch(({ data }) => {
+    if (data.msg) { setMessage(data.msg, 'error') }
+  })
+}
+
+export const toggleWifi = () => {
+  const { data } = store.getState()
+  axios.put(`${config.base}/api/v3/wifi/config`, { enabled: !data.get('wifi') }, getHeaders())
+    .catch(({ data }) => {
+      if (data.msg) { setMessage(data.msg, 'error') }
+    })
+}
+
 export const deleteTorrent = () => {
   const { ui, data } = store.getState()
   if (ui.get('activeMenu') !== 0) { return }
   const { id } = data.get('downloads').toJS()[ui.get('currentTorrent')]
   axios.delete(`${config.base}/api/v3/downloads/${id}/erase`, getHeaders())
+    .catch(({ data }) => {
+      if (data.msg) { setMessage(data.msg, 'error') }
+    })
 }
 
 export const downloadTorrent = () => {
@@ -84,23 +119,32 @@ export const downloadTorrent = () => {
         .on('end', () => store.dispatch(endDownload()))
         .pipe(createWriteStream(path.join(process.env.HOME, 'downloads', result[0].name)))
     })
+    .catch(({ data }) => {
+      if (data.msg) { setMessage(data.msg, 'error') }
+    })
 }
 
-let dlRefresh = false
+let refresh = false
 
 export const stopAllReloads = () => {
-  dlRefresh = false
+  refresh = false
 }
 
-export const startReloadDl = () => {
+export const startReload = () => {
 
   const fn = () => {
 
     Promise.all([
       axios.get(`${config.base}/api/v3/downloads/stats`, getHeaders()),
       axios.get(`${config.base}/api/v3/storage/disk`, getHeaders()),
-      axios.get(`${config.base}/api/v3/downloads/`, getHeaders())
-    ]).then(([{ data: { result: resultStats } }, { data: { result: resultStorage } }, { data: { result: resultDownloads } }]) => {
+      axios.get(`${config.base}/api/v3/downloads/`, getHeaders()),
+      axios.get(`${config.base}/api/v3/wifi/config`, getHeaders())
+    ]).then(([
+      { data: { result: resultStats } },
+      { data: { result: resultStorage } },
+      { data: { result: resultDownloads } },
+      { data: { result: resultWifi } }
+    ]) => {
 
       const { rx_rate, tx_rate } = resultStats
 
@@ -116,17 +160,19 @@ export const startReloadDl = () => {
           tx_rate: ((tx_rate / 1048576)).toFixed(3)
         }),
         disk({ free, used }),
-        downloads(resultDownloads.sort((a, b) => a.created_ts - b.created_ts))
+        downloads(resultDownloads.sort((a, b) => a.created_ts - b.created_ts)),
+        wifi(resultWifi.enabled),
+        dlMode(resultStats.throttling_mode)
       ]))
 
-      if (!dlRefresh) { return }
+      if (!refresh) { return }
       setTimeout(fn, 1e3)
 
     })
 
   }
 
-  dlRefresh = true
+  refresh = true
   fn()
 
 }

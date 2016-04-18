@@ -5,7 +5,9 @@ const initialState = fromJS({
   ioRates: [{ x: [], y: [], style: { line: 'blue' }, title: 'dl (mb/s)' }, { x: [], y: [], style: { line: 'red' }, title: 'up (mb/s)' }],
   disk: [{ percent: 0, stroke: 'red' }, { percent: 0, stroke: 'green' }],
   downloads: [],
-  download: null
+  download: null,
+  wifi: null,
+  dlMode: null
 })
 
 export default handleActions({
@@ -31,6 +33,12 @@ export default handleActions({
   DOWNLOADING: (state, { payload: progress }) =>
     state.set('download', fromJS(progress)),
 
-  DOWNLOAD_END: state => state.set('download', null)
+  DOWNLOAD_END: state => state.set('download', null),
+
+  WIFI: (state, { payload: wifi }) =>
+    state.set('wifi', wifi),
+
+  DL_MODE: (state, { payload: mode }) =>
+    state.set('dlMode', mode)
 
 }, initialState)

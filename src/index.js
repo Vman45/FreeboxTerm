@@ -3,7 +3,7 @@ import axios from 'axios'
 import { authorize } from 'core/auth'
 import { loader, screen } from 'components'
 import { start, stop } from 'components/loader'
-import { dl } from 'utils'
+import { dl, startReload } from 'utils'
 import config from 'config'
 import render from 'render'
 
@@ -22,7 +22,10 @@ axios.get(`${config.base}/api_version`)
   .then(() => {
     stop()
 
-    if (!download_url) { return render() }
+    if (!download_url) {
+      startReload()
+      return render()
+    }
 
     console.log('> Authenticated!')
     console.log('> Adding download link...')
