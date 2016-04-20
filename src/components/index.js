@@ -13,9 +13,6 @@ export const loader = blessed.box({
   content: 'Checking for Freebox around   /'
 })
 
-/**
- * Dowload section
- */
 export const dlPage = blessed.layout({
   width: '100%',
   height: '100%',
@@ -69,3 +66,14 @@ dlBottom.append(dlBotRight)
 dlBottom.append(bottomStatus)
 dlBotRight.append(dlInfo)
 dlBotRight.append(dlGauge)
+
+export const files = blessed.box({
+  width: '100%',
+  height: '100%',
+  fg: 'gray',
+  tags: true,
+  padding: 1,
+  hidden: true
+})
+
+dlPage.prepend(files)

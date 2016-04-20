@@ -5,6 +5,7 @@ export const disk = createAction('DISK')
 export const downloads = createAction('DOWNLOADS')
 export const wifi = createAction('WIFI')
 export const dlMode = createAction('DL_MODE')
+export const files = createAction('FILES')
 
 export const downloading = createAction('DOWNLOADING')
 export const endDownload = createAction('DOWNLOAD_END')

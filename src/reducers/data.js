@@ -7,7 +7,8 @@ const initialState = fromJS({
   downloads: [],
   download: null,
   wifi: null,
-  dlMode: null
+  dlMode: null,
+  files: []
 })
 
 export default handleActions({
@@ -39,6 +40,9 @@ export default handleActions({
     state.set('wifi', wifi),
 
   DL_MODE: (state, { payload: mode }) =>
-    state.set('dlMode', mode)
+    state.set('dlMode', mode),
+
+  FILES: (state, { payload: files }) =>
+    state.set('files', fromJS(files))
 
 }, initialState)

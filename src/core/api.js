@@ -1,15 +1,16 @@
 import axios from 'axios'
-import progress from 'request-progress'
 import path from 'path'
-import querystring from 'querystring'
 import request from 'request'
+import progress from 'request-progress'
+import querystring from 'querystring'
 import { batchActions } from 'redux-batched-actions'
 import { createWriteStream } from 'fs'
 
 import config from 'config'
-import { getHeaders } from 'utils'
-import { setMessage } from 'components/message'
 import store from 'store'
+import { logToFile, getHeaders } from 'utils'
+import { setMessage } from 'components/message'
+import { file } from 'actions/ui'
 import {
   wifi,
   ioRates,
@@ -17,13 +18,32 @@ import {
   dlMode,
   downloads,
   endDownload,
-  downloading
+  downloading,
+  files
 } from 'actions/data'
+
+export const download = (filepath, name) => {
+  progress(request({ url: `${config.base}/api/v3/dl/${filepath}`, ...getHeaders() }), { throttle: 200 })
+    .on('progress', status => store.dispatch(downloading(status)))
+    .on('error', () => store.dispatch(endDownload()))
+    .on('end', () => store.dispatch(endDownload()))
+    .pipe(createWriteStream(path.join(process.env.HOME, 'downloads', name)))
+}
+
+export const downloadFile = () => {
+  const { ui, data } = store.getState()
+  const cur = ui.get('fileSelected')
+  if (cur === null) { return }
+
+  const f = data.get('files').toJS()[cur]
+  store.dispatch(file(null))
+  download(f.filepath, f.name)
+}
 
 export const downloadTorrent = () => {
   const { ui, data } = store.getState()
-  // TODO redo
-  // if (ui.get('activeMenu') !== 0) { return }
+  if (ui.get('fileSelected') !== null) { return }
+
   const { id } = data.get('downloads').toJS()[ui.get('currentTorrent')]
 
   axios.get(`${config.base}/api/v3/downloads/${id}/files`, getHeaders())
@@ -31,14 +51,14 @@ export const downloadTorrent = () => {
       const { result, success } = data
       if (success !== true) { return }
 
-      // TODO
-      if (result.length > 1) { return }
+      if (result.length > 1) {
+        return store.dispatch(batchActions([
+          files(result),
+          file(0)
+        ]))
+      }
 
-      progress(request({ url: `${config.base}/api/v3/dl/${result[0].filepath}`, ...getHeaders() }), { throttle: 200 })
-        .on('progress', progress => store.dispatch(downloading(progress)))
-        .on('error', () => store.dispatch(endDownload()))
-        .on('end', () => store.dispatch(endDownload()))
-        .pipe(createWriteStream(path.join(process.env.HOME, 'downloads', result[0].name)))
+      download(result[0].filepath, result[0].name)
     })
     .catch(({ data }) => {
       if (data.msg) { setMessage(data.msg, 'error') }

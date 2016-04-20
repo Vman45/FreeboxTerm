@@ -35,6 +35,7 @@ export default () => {
   components.diskGauge.setStack(data.disk)
   components.dlChart.setData(data.ioRates)
   components.dlGauge.hide()
+  components.files.hide()
 
   components.dlList.children.forEach(c => c.hide() && c.free() && c.destroy())
   components.dlList.children = []
@@ -94,6 +95,11 @@ export default () => {
     components.dlList.append(box)
 
   })
+
+  if (ui.fileSelected !== null) {
+    components.files.setContent(data.files.map((r, i) => i === ui.fileSelected ? `{white-fg}${r.name}{/white-fg}` : r.name).join('\n'))
+    components.files.show()
+  }
 
   screen.render()
 }
