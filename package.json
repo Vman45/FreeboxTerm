@@ -30,7 +30,7 @@
   "author": "Balthazar Gronon",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.9.1",
+    "axios": "^0.20.0",
     "blessed": "^0.1.81",
     "blessed-contrib": "^3.5.5",
     "dateformat": "^1.0.12",
